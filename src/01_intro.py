@@ -2,7 +2,7 @@
 # requires-python = ">=3.12"
 # dependencies = [
 #     "polars==1.29.0",
-#     "scikit-learn"
+#     "scikit-learn==1.6.1"
 # ]
 # ///
 
