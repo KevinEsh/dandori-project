@@ -83,9 +83,9 @@ def run_data_prep(raw_data_path: str, dest_path: str, dataset: str = "green"):
     )
 
     # Transform the target to numpy array
-    y_train = df_y_train.to_numpy()
-    y_val = df_y_val.to_numpy()
-    y_test = df_y_test.to_numpy()
+    y_train = df_y_train.to_numpy().ravel()
+    y_val = df_y_val.to_numpy().ravel()
+    y_test = df_y_test.to_numpy().ravel()
 
     # Fit the DictVectorizer and preprocess data
     dv = DictVectorizer()
