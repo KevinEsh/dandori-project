@@ -14,7 +14,7 @@ RF_PARAMS = ['max_depth', 'n_estimators', 'min_samples_split', 'min_samples_leaf
 
 mlflow.set_tracking_uri("http://127.0.0.1:5000")
 mlflow.set_experiment(EXPERIMENT_NAME)
-mlflow.sklearn.autolog()
+mlflow.sklearn.autolog(log_datasets=False)
 
 
 def load_pickle(filename):
@@ -36,10 +36,10 @@ def train_and_log_model(data_path, params):
         rf.fit(X_train, y_train)
 
         # Evaluate model on the validation and test sets
-        val_rmse = root_mean_squared_error(y_val, rf.predict(X_val))
-        mlflow.log_metric("val_rmse", val_rmse)
-        test_rmse = root_mean_squared_error(y_test, rf.predict(X_test))
-        mlflow.log_metric("test_rmse", test_rmse)
+        mlflow.log_metrics({
+            "val_rmse": root_mean_squared_error(y_val, rf.predict(X_val)),
+            "test_rmse": root_mean_squared_error(y_test, rf.predict(X_test))
+        })
 
 
 @click.command()
@@ -66,6 +66,7 @@ def run_register_model(data_path: str, top_n: int):
         max_results=top_n,
         order_by=["metrics.validation_rmse ASC"]
     )
+
     for run in runs:
         train_and_log_model(data_path=data_path, params=run.data.params)
 
