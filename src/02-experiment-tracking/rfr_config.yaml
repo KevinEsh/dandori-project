@@ -1,0 +1,20 @@
+experiment:
+  name: nyc_green_taxi
+  tags:
+    project_name: taxi_duration_forecasting
+    taxi_color: green
+    course: mlops-zoomcamp
+    mlflow.note.content: This is the green taxi forecasting project for the mlops-zoomcamp course This experiment contains the prediction models for green taxi's duration on a trip
+
+tracking_uri: http://127.0.0.1:5000
+
+model:
+  tags:
+    author: Kevin Soto
+
+  hyp_params:
+    max_depth: 5
+    n_estimators: 5
+    min_samples_split: 2
+    min_samples_leaf: 1
+    random_state: 0
