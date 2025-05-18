@@ -176,3 +176,6 @@ cython_debug/
 # Local Datastore
 *.parquet
 *.pkl
+*.db
+mlruns/
+artifacts/
