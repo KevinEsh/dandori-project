@@ -1,8 +1,8 @@
 import os
 import pickle
+
 import click
 import polars as pl
-
 from sklearn.feature_extraction import DictVectorizer
 
 
@@ -16,36 +16,35 @@ def read_dataframe(filename: str):
 
     df = df.with_columns(
         duration=(
-            (pl.col('lpep_dropoff_datetime') - pl.col('lpep_pickup_datetime')).dt.total_seconds() / 60
+            (
+                pl.col("lpep_dropoff_datetime") - pl.col("lpep_pickup_datetime")
+            ).dt.total_seconds()
+            / 60
         )
     )
 
-    df = df.filter(
-        pl.col('duration').is_between(1, 60)
-    )
+    df = df.filter(pl.col("duration").is_between(1, 60))
 
     df = df.with_columns(
         pu_do=pl.concat_str(
-            [ # pl.concat_str will cast to str automatically
-                pl.col('PULocationID'),#.cast(str),
-                pl.col('DOLocationID'),#cast(str),
+            [  # pl.concat_str will cast to str automatically
+                pl.col("PULocationID"),  # .cast(str),
+                pl.col("DOLocationID"),  # cast(str),
             ],
-            separator='_'
-        )        
+            separator="_",
+        )
     )
 
-    categorical = ('pu_do',)
-    numerical = ('trip_distance',)
-    target = 'duration'
+    categorical = ("pu_do",)
+    numerical = ("trip_distance",)
+    target = "duration"
 
     df_input = df.select(
         pl.col(categorical),
         pl.col(numerical),
-    ).collect() #to_dicts()
+    ).collect()  # to_dicts()
 
-    df_target = df.select(
-        pl.col(target)
-    ).collect()
+    df_target = df.select(pl.col(target)).collect()
 
     return df_input, df_target
 
@@ -61,13 +60,9 @@ def preprocess(df: pl.DataFrame, dv: DictVectorizer, fit_dv: bool = False):
 
 @click.command()
 @click.option(
-    "--raw_data_path",
-    help="Location where the raw NYC taxi trip data was saved"
+    "--raw_data_path", help="Location where the raw NYC taxi trip data was saved"
 )
-@click.option(
-    "--dest_path",
-    help="Location where the resulting files will be saved"
-)
+@click.option("--dest_path", help="Location where the resulting files will be saved")
 def run_data_prep(raw_data_path: str, dest_path: str, dataset: str = "green"):
     # Load parquet files
     df_x_train, df_y_train = read_dataframe(
@@ -103,5 +98,5 @@ def run_data_prep(raw_data_path: str, dest_path: str, dataset: str = "green"):
     dump_pickle((X_test, y_test), os.path.join(dest_path, "test.pkl"))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run_data_prep()
